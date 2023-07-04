@@ -5,6 +5,7 @@
         <ul>
             <li> <Link href="/">Accueil</Link> </li>
             <li> <Link href="/services">Service</Link> </li>
+            <li> <Link href="/bons-de-commandes">Bons de commandes</Link> </li>
         </ul>
     </header>
 
