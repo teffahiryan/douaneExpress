@@ -9,4 +9,8 @@ class OrderController extends Controller
     public function index(){
         return inertia('Order/Index');
     }
+
+    public function show(String $id){
+        return inertia('Order/Show');
+    }
 }

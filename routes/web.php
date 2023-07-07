@@ -12,8 +12,9 @@ Route::get('/', function () {
 
 // Services
 
-Route::get('/services', [ServiceController::class, 'index'])->name('service');
+Route::get('/services', [ServiceController::class, 'index'])->name('service.index');
 
 // Purchase Orders
 
-Route::get('/bons-de-commandes', [OrderController::class, 'index'])->name('order');
+Route::get('/bons-de-commandes', [OrderController::class, 'index'])->name('order.index');
+Route::get('/bons-de-commande/{id}', [OrderController::class, 'show'])->name('order.show');
