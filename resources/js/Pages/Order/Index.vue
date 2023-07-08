@@ -16,12 +16,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr v-for="order in orders" :key="order.id">
                     <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>50€</td>
-                    <td>22/05/2000</td>
-                    <td> Ouvert </td>
+                    <td>{{ order.reference }}</td>
+                    <td>{{ order }}</td>
+                    <td>{{ order.date }}</td>
+                    <td>{{ order.status }}</td>
                     <td>
                         <a class="btn btn-info text-light me-2">Voir</a>
                         <button class="btn btn-secondary text-light me-2" data-bs-toggle="modal" data-bs-target="#editModal">
@@ -54,6 +54,12 @@
             EditModal,
             DeleteModal,
         },
+        props: {
+            orders: Array
+        },
+        computed: {
+            console: () => "console"
+        }
     }
 
 </script>

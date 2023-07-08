@@ -18,7 +18,7 @@ class ServiceSeeder extends Seeder
         for ($i=0; $i < 10; $i++) { 
             $service = Service::inRandomOrder()->first();
 
-            Service::factory('1', ['onService' => $service])->create();
+            Service::factory('1', ['onService' => $service->name])->create();
         }
 
     }

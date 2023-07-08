@@ -20,14 +20,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr v-for="service in services" :key="service.id">
                     <th scope="row">1</th>
                     <td>null</td>
-                    <td>REF5161</td>
-                    <td>Nom random</td>
-                    <td>50€</td>
-                    <td> Oui </td>
-                    <td> Aucun </td>
+                    <td>{{ service.reference }}</td>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.price }} €</td>
+                    <td>{{ service.isLimited }}</td>
+                    <td> {{ service.onService }} </td>
                     <td>
                         <button class="btn btn-secondary text-light me-2" data-bs-toggle="modal" data-bs-target="#editModal">
                             Modifier
@@ -59,6 +59,9 @@
             EditModal,
             DeleteModal,
         },
+        props: {
+            services: Array
+        }
     }
 
 </script>

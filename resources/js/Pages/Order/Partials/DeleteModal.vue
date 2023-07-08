@@ -9,8 +9,8 @@
             <div class="modal-body text-center">
                 Êtes-vous sur de vouloir supprimer ce bon ?
                 <div class="mt-2">
-                    <button class="btn btn-primary mx-1">Non</button>
-                    <button class="btn btn-primary mx-1">Oui</button>
+                    <button class="btn btn-primary mx-1" data-bs-dismiss="modal" aria-label="Close">Non</button>
+                    <a href="#" class="btn btn-primary mx-1">Oui</a>
                 </div>
             </div>
         </div>
