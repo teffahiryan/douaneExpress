@@ -13,14 +13,13 @@ Route::get('/', function () {
 // Services
 
 Route::get('/services', [ServiceController::class, 'index'])->name('service.index');
-Route::post('/service', [ServiceController::class, 'create'])->name('service.create');
-Route::post('/service/{service}', [ServiceController::class, 'update'])->name('service.update');
-Route::post('/service/{service}', [ServiceController::class, 'destroy'])->name('service.destroy');
+Route::post('/service', [ServiceController::class, 'store'])->name('service.create');
+Route::put('/service/{service}', [ServiceController::class, 'update'])->name('service.update');
+Route::delete('/service/{service}', [ServiceController::class, 'destroy'])->name('service.destroy');
 
 // Purchase Orders
 
 Route::get('/bons-de-commandes', [OrderController::class, 'index'])->name('order.index');
-Route::get('/bons-de-commande/{id}', [OrderController::class, 'show'])->name('order.show');
 Route::post('/bons-de-commande', [OrderController::class, 'create'])->name('order.create');
-Route::post('/bons-de-commande/{order}', [OrderController::class, 'update'])->name('order.update');
-Route::post('/bons-de-commande/{order}', [OrderController::class, 'destroy'])->name('order.destroy');
+Route::put('/bons-de-commande/{order}', [OrderController::class, 'update'])->name('order.update');
+Route::delete('/bons-de-commande/{order}', [OrderController::class, 'destroy'])->name('order.destroy');

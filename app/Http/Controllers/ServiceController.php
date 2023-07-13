@@ -9,26 +9,42 @@ use App\Http\Requests\ServiceRequest;
 class ServiceController extends Controller
 {
     public function index(){
-
+ 
         return inertia('Service/Index', [
-            'services' => Service::orderBy("reference", "ASC")->get()
+            'services' => Service::orderBy("id", "ASC")->get()
         ]);
     }
 
     public function store(ServiceRequest $request){
-        Service::create($request->validated());
 
-        return inertia('Service/Index');
+        $service = Service::create($request->validated());
+
+        // /** @var UploadedFile|null $image */
+        // $image = $request->validated('image');
+        // if ($image != null && !$image->getError()){
+        //     $data['image'] = $image->store('service', 'public');
+        //     $service->update($data);
+        // }
+
+        return redirect()->back();
     }
 
     public function update(ServiceRequest $request, Service $service){
         $service->update($request->validated());
 
-        return inertia('Service/Index');
+        // /** @var UploadedFile|null $image */
+        // $image = $request->validated('image');
+        // if ($image != null && !$image->getError()){
+        //     $data['image'] = $image->store('service', 'public');
+        //     $service->update($data);
+        // }
+
+        return redirect()->back();
     }
 
     public function destroy(Service $service){
         $service->delete();
-        return inertia('Service/Index');
+        
+        return redirect()->back();
     }
 }

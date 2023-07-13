@@ -11,7 +11,7 @@ class ServiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class ServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "reference" => ['required'],
+            "name" => ['required'],
+            "price" => ['required'],
+            "isLimited" => ['boolean'],
+            "image" => ['string'],
+            "onService" => ['string']
         ];
     }
 }

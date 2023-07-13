@@ -1,5 +1,5 @@
 <template>
-    <form>
+    <form @submit.prevent="" id="createForm">
     <div class="mb-3">
         <label class="form-label"> Référence </label>
         <input type="text" class="form-control">
@@ -30,4 +30,4 @@
         <input type="text" class="form-control">
     </div>
 </form>
-</template>
+</template> 

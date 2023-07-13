@@ -5,6 +5,7 @@
         <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#createModal">
             Créer un service
         </button>
+        <CreateModal :services="services"/>
 
         <table class="table">
             <thead>
@@ -21,7 +22,7 @@
             </thead>
             <tbody>
                 <tr v-for="service in services" :key="service.id">
-                    <th scope="row">1</th>
+                    <th scope="row">{{ service.id }}</th>
                     <td>null</td>
                     <td>{{ service.reference }}</td>
                     <td>{{ service.name }}</td>
@@ -29,22 +30,19 @@
                     <td>{{ service.isLimited }}</td>
                     <td> {{ service.onService }} </td>
                     <td>
-                        <button class="btn btn-secondary text-light me-2" data-bs-toggle="modal" data-bs-target="#editModal">
-                            Modifier
+                        <button class="btn btn-secondary text-light me-2" data-bs-toggle="modal" v-bind:data-bs-target="'#editModal' + service.id">
+                            <i class="fas fa-pencil-alt"></i>
                         </button>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            Supprimer
+                        <EditModal :id="service.id" :service="service" :services="services"/>
+                        <button class="btn btn-danger" data-bs-toggle="modal" v-bind:data-bs-target="'#deleteModal' + service.id">
+                            <i class="fas fa-trash"></i>
                         </button>
+                        <DeleteModal :id=service.id />
                     </td>
                 </tr>
             </tbody>
         </table>
     </div> 
-
-    <CreateModal/>
-    <EditModal/>
-    <DeleteModal/>
-
 </template>
 
 <script>
@@ -61,7 +59,10 @@
         },
         props: {
             services: Array
-        }
+        },
+        computed: {
+            console: () => "console"
+        },
     }
 
 </script>

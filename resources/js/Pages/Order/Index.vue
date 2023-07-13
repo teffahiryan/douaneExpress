@@ -1,9 +1,12 @@
 <template>
     <div>
         <h1>Bons de commandes</h1>
+
         <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#createModal">
             Créer un bon
         </button>
+        <CreateModal :services="services"/>
+
         <table class="table">
             <thead>
                 <tr>
@@ -17,28 +20,31 @@
             </thead>
             <tbody>
                 <tr v-for="order in orders" :key="order.id">
-                    <th scope="row">1</th>
-                    <td>{{ order.reference }}</td>
-                    <td>{{ order }}</td>
+                    <th scope="row">{{ order.id }}</th>
+                    <td>{{ order.reference }}</td> 
+                    <td>{{ "0" }} €</td>
                     <td>{{ order.date }}</td>
-                    <td>{{ order.status }}</td>
+                    <td> {{ order.status == 1 ? "Ouvert" : "Fermé" }}</td>
                     <td>
-                        <a class="btn btn-info text-light me-2">Voir</a>
-                        <button class="btn btn-secondary text-light me-2" data-bs-toggle="modal" data-bs-target="#editModal">
-                            Modifier
+                        <button class="m-1 btn btn-secondary text-light" data-bs-toggle="modal" v-bind:data-bs-target="'#editModal' + order.id">
+                            <i class="fas fa-pencil-alt"></i>
                         </button>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            Supprimer
+                        <EditModal :id="order.id" :order="order" :services="services"/>
+
+                        <button v-if="order.status == 1" class="m-1 btn btn-info text-light" data-bs-toggle="modal" v-bind:data-bs-target="'#showModal' + order.id">
+                            <i class="fas fa-eye"></i>
                         </button>
+                        <ShowModal :id="order.id" :order="order" :services="services"/>
+                        
+                        <button class="m-1 btn btn-danger" data-bs-toggle="modal" v-bind:data-bs-target="'#deleteModal' + order.id">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <DeleteModal :id=order.id />
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    
-    <CreateModal/>
-    <EditModal/>
-    <DeleteModal/>
 
 </template>
 
@@ -47,19 +53,22 @@
     import CreateModal from './Partials/CreateModal.vue';
     import EditModal from './Partials/EditModal.vue';
     import DeleteModal from './Partials/DeleteModal.vue';
+    import ShowModal from './Partials/ShowModal.vue';
 
     export default {
         components : {
             CreateModal, 
             EditModal,
             DeleteModal,
+            ShowModal
         },
         props: {
-            orders: Array
+            orders: Array,
+            services: Array
         },
         computed: {
             console: () => "console"
-        }
+        },
     }
 
 </script>
