@@ -26,15 +26,15 @@
                     <td>{{ order.date }}</td>
                     <td> {{ order.status == 1 ? "Ouvert" : "Fermé" }}</td>
                     <td>
-                        <button class="m-1 btn btn-secondary text-light" data-bs-toggle="modal" v-bind:data-bs-target="'#editModal' + order.id">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <EditModal :id="order.id" :order="order" :services="services"/>
-
-                        <button v-if="order.status == 1" class="m-1 btn btn-info text-light" data-bs-toggle="modal" v-bind:data-bs-target="'#showModal' + order.id">
+                        <button class="m-1 btn btn-info text-light" data-bs-toggle="modal" v-bind:data-bs-target="'#showModal' + order.id">
                             <i class="fas fa-eye"></i>
                         </button>
                         <ShowModal :id="order.id" :order="order" :services="services"/>
+
+                        <button v-if="order.status == 1" class="m-1 btn btn-secondary text-light" data-bs-toggle="modal" v-bind:data-bs-target="'#editModal' + order.id">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <EditModal :id="order.id" :order="order" :services="services"/>
                         
                         <button class="m-1 btn btn-danger" data-bs-toggle="modal" v-bind:data-bs-target="'#deleteModal' + order.id">
                             <i class="fas fa-trash"></i>
@@ -45,7 +45,7 @@
             </tbody>
         </table>
     </div>
-
+ 
 </template>
 
 <script>
