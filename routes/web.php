@@ -20,6 +20,6 @@ Route::delete('/service/{service}', [ServiceController::class, 'destroy'])->name
 // Purchase Orders
 
 Route::get('/bons-de-commandes', [OrderController::class, 'index'])->name('order.index');
-Route::post('/bons-de-commande', [OrderController::class, 'create'])->name('order.create');
+Route::post('/bons-de-commande', [OrderController::class, 'store'])->name('order.create');
 Route::put('/bons-de-commande/{order}', [OrderController::class, 'update'])->name('order.update');
 Route::delete('/bons-de-commande/{order}', [OrderController::class, 'destroy'])->name('order.destroy');

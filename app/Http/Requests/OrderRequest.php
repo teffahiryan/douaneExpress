@@ -22,8 +22,18 @@ class OrderRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "reference" => ['string'],
             "status" => ["boolean"],
             "date" => ["required"],
         ];
+
+
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'reference' => "REF".strval(random_int(0, 20000000)),
+        ]);
     }
 }

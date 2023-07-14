@@ -36,7 +36,7 @@
                     <div class="mb-3 form-group">
                         <label class="form-label"> Sur service (Optionnel)</label>
                         <select class="form-select" v-model="form.onService">
-                            <option disabled value=""> Sélectionnez un service </option>
+                            <option disabled value="null"> Sélectionnez un service </option>
                             <option v-for="service in services" :value="service.name" :key="'select'+service.id"> {{ service.name }} </option>
                         </select>
                     </div>
@@ -64,8 +64,8 @@
                     name: null,
                     price: null,
                     image: "null",
-                    isLimited: null,
-                    onService: ""
+                    isLimited: 0,
+                    onService: "null"
                 }
             }
         },
@@ -80,9 +80,9 @@
                 this.form.reference = null;
                 this.form.name = null;
                 this.form.price = null;
-                this.form.reference = null;
-                this.form.isLimited = null;
-                this.form.onService = null;
+                this.form.reference = "null";
+                this.form.isLimited = 0;
+                this.form.onService = "null";
             },
 
             submitCreateService(){
@@ -93,7 +93,7 @@
                         onSuccess: (page) => {
                             this.closeModal();
                         },
-                        onError: (errors) => {alert("error")},
+                        onError: (errors) => {console.log(errors)},
                     }
                 );
                 console.log("test 2");

@@ -24,15 +24,31 @@ class OrderController extends Controller
     }
 
     public function store(OrderRequest $request){
-        Order::create($request->validated());
+        $order = Order::create($request->validated());
 
-        return inertia('Order/Index');
+        if($request->services != null){
+            for($i = 0; $i <= count($request->services) - 1 ; $i++){
+                $indexOf = array_search($request->services[$i]['id'], $request->quantity);
+                $service_id_array[$request->services[$i]['id']] = ['quantity' => $request->quantity[$indexOf]['quantity'], 'price' => $request->quantity[$indexOf]['price']];
+            }
+            $order->services()->sync($service_id_array); 
+        }
+
+        return redirect()->back();
     }
 
     public function update(OrderRequest $request, Order $order){
         $order->update($request->validated());
 
-        return inertia('Order/Index');
+        if($request->services != null){
+            for($i = 0; $i <= count($request->services) - 1 ; $i++){
+                $indexOf = array_search($request->services[$i]['id'], $request->quantity);
+                $service_id_array[$request->services[$i]['id']] = ['quantity' => $request->quantity[$indexOf]['quantity'], 'price' => $request->quantity[$indexOf]['price']];
+            }
+            $order->services()->sync($service_id_array); 
+        }
+
+        return redirect()->back();
     }
 
     public function destroy(Order $order){
