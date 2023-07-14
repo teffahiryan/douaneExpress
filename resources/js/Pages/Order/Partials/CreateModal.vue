@@ -17,20 +17,33 @@
 
                     <div>
                         <div>Liste des services</div>
-                        <p class="my-3"> Aucun service</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between" v-for="selectedService in form.services" :key="'selected'+selectedService.id">
+                                <div>{{ selectedService.name }} - {{ selectedService.price }} € </div>
+                                <div>
+                                    <button @click.prevent="removeServiceToList(selectedService.id)" class="m-1 btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
 
                     <hr/>
 
                     <div class="mb-3">
                         <label class="form-label"> Sélectionner un ou plusieurs services </label>
-                        <select class="form-select" v-model="form.services" multiple>
-                            <option disabled value=""> Sélectionnez un service </option>
-                            <option class="d-flex justify-content-between" v-for="service in services" :value="service.name" :key="'select'+service.id"> 
-                                <div>{{ service.name }}</div>
-                                <div>{{ service.price }} €</div>
-                            </option>
-                        </select>
+                        <div class="d-flex">
+                            <select id="selectService" class="form-select">
+                                <option disabled value=""> Sélectionnez un service </option>
+                                <option class="d-flex justify-content-between" v-for="service in services" :value="service.id" :key="'selectCreate'+service.id"> 
+                                    <div>{{ service.id }} </div>
+                                    <div>{{ service.name }}</div>
+                                    <div>{{ service.price }} €</div>
+                                </option>
+                            </select>
+                            <button @click.prevent="addServiceToList" class="btn btn-primary ms-2"> + </button>
+                        </div>
                     </div>
 
                     <hr/>
@@ -51,7 +64,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Créer</button>
+            <button type="submit" class="btn btn-primary">Créer</button>
             </div>
         </div>
         </div>
@@ -69,12 +82,29 @@
                     reference: "test",
                     name: null,
                     status: null,
-                    services: null,
+                    services: [],
                     date: null
                 }
             }
         },
         methods : {
+
+            // Service list
+
+            addServiceToList(){
+                var selectedValue = document.getElementById("selectService").value;
+                this.form.services.push(this.services.find(service => service.id == selectedValue));
+            },
+
+            removeServiceToList(id){
+                const index = this.form.services.findIndex(service => service.id == id)
+                if(index > -1){
+                    this.form.services.splice(index, 1);
+                }
+            },
+
+            // Modal
+
             closeModal(){
                 document.getElementById("createModalClose").click();
                 this.form.reference = null;
@@ -84,6 +114,8 @@
                 this.form.services = null;
             },
 
+            // Route
+ 
             submitCreateOrder(){
                 router.post(
                     '/bons-de-commande', 
