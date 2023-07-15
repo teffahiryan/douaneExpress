@@ -22,9 +22,15 @@
                         </li>
                     </ul>
                 </div>
-
+ 
                 <div class="mb-4">
                     <h2 class="mb-3"> Liste des services </h2>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item" v-for="service in order.services" :key="'orderService'+id+service.id">
+                            {{ service.name }} - {{ service.price }} € - x{{ service.pivot.quantity }}
+                        </li>
+                    </ul>
+                    <div>Prix total : {{ order.price }} € </div>
                 </div>
 
             </div>

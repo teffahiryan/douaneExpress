@@ -22,7 +22,7 @@
                 <tr v-for="order in orders" :key="order.id">
                     <th scope="row">{{ order.id }}</th>
                     <td>{{ order.reference }}</td> 
-                    <td>{{ "0" }} €</td>
+                    <td>{{ order.price }} €</td>
                     <td>{{ order.date }}</td>
                     <td> {{ order.status == 1 ? "Ouvert" : "Fermé" }}</td>
                     <td>

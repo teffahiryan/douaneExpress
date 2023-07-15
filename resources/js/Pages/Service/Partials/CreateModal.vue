@@ -4,10 +4,10 @@
         <div class="modal-content">
             <div class="modal-header">
             <h1 class="modal-title fs-5" id="createModalLabel">Ajout d'un service</h1>
-            <button type="button" id="createModalClose" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" @click="closeModal" id="createModalClose" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="createForm" @submit.prevent="submitCreateService" >
+                <form id="createForm" @submit.prevent="submitCreateService">
                     <div class="mb-3">
                         <label class="form-label"> Référence </label>
                         <input type="text" class="form-control" v-model="form.reference">
@@ -25,7 +25,10 @@
 
                     <div class="mb-3">
                         <label class="form-label"> Image </label>
-                        <input type="file" class="form-control">
+                        <div class="d-flex">
+                            <input id="createFile" type="file" @input="form.image = $event.target.files[0]" class="form-control">
+                            <button type="button" class="btn btn-danger ms-2" @click.prevent="removeFile"> <i class="fa fa-times"></i> </button>
+                        </div>
                     </div>
 
                     <div class="mb-3 form-check form-switch">
@@ -75,15 +78,26 @@
         },
         methods : {
 
+            // File
+
+            removeFile(){
+                this.form.image = "null";
+                document.getElementById("createFile").value = null;
+            },
+
+            // Modal
+
             closeModal(){
                 document.getElementById("createModalClose").click();
                 this.form.reference = null;
                 this.form.name = null;
                 this.form.price = null;
-                this.form.reference = "null";
                 this.form.isLimited = 0;
                 this.form.onService = "null";
+                this.form.image = "null";
             },
+
+            // Submit
 
             submitCreateService(){
                 router.post(

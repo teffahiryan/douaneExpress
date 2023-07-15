@@ -7,7 +7,7 @@
             <button :id="'editModalClose'+id" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form :id="'editForm'+id" @submit.prevent="submitEditService" >
+                <form :id="'editForm'+id" @submit.prevent="submitEditService" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label class="form-label"> Référence </label>
                         <input type="text" class="form-control" v-model="form.reference">
@@ -25,7 +25,10 @@
 
                     <div class="mb-3">
                         <label class="form-label"> Image </label>
-                        <input type="file" class="form-control">
+                        <div class="d-flex">
+                            <input :id="'editFile'+id" type="file" @input="form.image = $event.target.files[0]" class="form-control">
+                            <button type="button" class="btn btn-danger ms-2" @click.prevent="removeFile"> <i class="fa fa-times"></i> </button>
+                        </div>
                     </div>
 
                     <div class="mb-3 form-check form-switch">
@@ -63,10 +66,11 @@
         data() {
             return {
                 form: {
+                    _method: 'put',
                     reference: this.service.reference,
                     name: this.service.name,
                     price: this.service.price,
-                    image: "null",
+                    image: this.service.image,
                     isLimited: this.service.isLimited,
                     onService: this.service.onService
                 }
@@ -74,23 +78,30 @@
         },
         methods : {
 
+            // File
+
+            removeFile(){
+                this.form.image = "null";
+                document.getElementById("editFile"+this.id).value = null;
+            },
+
+            // Modal
+
             closeModal(){
                 document.getElementById("editModalClose"+this.id).click();
             },
 
             submitEditService(){
-                console.log("test");
-                router.put(
+                router.post(
                     '/service/'+this.id, 
                     this.form,
                     {
                         onSuccess: (page) => {
                             this.closeModal();
                         },
-                        onError: (errors) => {alert("error")},
+                        onError: (errors) => {console.log(errors); console.log(this.form)},
                     }
                 );
-                console.log("test 2");
             },
 
         },

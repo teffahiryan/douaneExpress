@@ -21,16 +21,21 @@
                             <li class="list-group-item d-flex justify-content-between" v-for="selectedService in form.services" :key="'selected'+selectedService.id">
                                 <div>{{ selectedService.name }} - {{ selectedService.price }} € </div>
                                 <div>
-                                    <input :id="'inputService'+selectedService.id" class="w-25" type="text" @change.prevent="updateQuantity(selectedService.id)"/>
-                                    <button @click.prevent="removeServiceToList(selectedService.id)" class="m-1 btn btn-danger">
+                                
+                                    <!-- Not limited -->
+                                    <input v-if="selectedService.isLimited == 0" :id="'inputService'+selectedService.id" :value="selectedService.pivot.quantity" min="0" class="w-25" type="number" @change.prevent="updateQuantity(selectedService.id)"/>
+                                    <!-- Limited -->
+                                    <input v-else :id="'inputService'+selectedService.id" class="w-25" value="1" type="number" @change.prevent="updateQuantity(selectedService.id)" disabled/>
+
+                                    <button @click.prevent="removeServiceToList(selectedService.id)" type="button" class="m-1 btn btn-danger">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </li>
                         </ul>
-                        <div class="text-right"> Prix total : 0 €</div>
+                        <div class="text-right"> Prix total : {{ totalValue }} €</div>
                     </div>
-
+ 
                     <hr/>
 
                     <div class="mb-3">
@@ -76,6 +81,7 @@
 <script>
 
     import Form from './Form.vue';
+    import { router } from '@inertiajs/vue3'
 
     export default {
         props: ['id', 'order', 'services'],
@@ -85,40 +91,82 @@
                     reference: null,
                     name: this.order.name,
                     status: this.order.status,
-                    services: null,
+                    services: this.order.services,
+                    quantity: [],
                     date: this.order.date
-                }
+                },
+                totalPrice: 0.0
             }
         },
         methods : {
 
+           // Disable options
+
+           isServiceDisabled(service) {
+                        // Si le service possède un service supérieur et que le service supérieur n'est pas dans la liste des services sélectionné -> disabled
+                return  (service.onService !== 'null' && this.form.services.findIndex(e => e.name === service.onService) === -1)
+                        ||
+                        // Si le service est limité à une commande et qu'il est déjà dans la liste des services sélectionné -> disabled
+                        (service.isLimited == 1 && this.form.services.findIndex(e => e.name === service.name) > -1);
+            },
+
             // Service list
 
             addServiceToList(){
-                var selectedValue = document.getElementById("selectService").value;
-                var service = this.services.find(service => service.id == selectedValue);
-                this.form.services.push(service);
+                var selectService = document.getElementById("selectService");
+                var selectedValue = selectService.value;
 
-                const newQuantity = {
-                    'id': selectedValue,
-                    'quantity' : 1,
-                    'price' : service.price
+                if(selectedValue != ""){
+                    var service = this.services.find(service => service.id == selectedValue);
+                    this.form.services.push(service);
+
+                    const newQuantity = {
+                        'id': selectedValue,
+                        'quantity' : 1,
+                        'price' : service.price
+                    }
+
+                    this.form.quantity.push(newQuantity);
+
+                    this.totalPrice();
                 }
-
-                this.form.quantity.push(newQuantity);
             },
 
             removeServiceToList(id){
-                const index = this.form.services.findIndex(service => service.id == id)
+                const index = this.form.services.findIndex(service => service.id == id);
+                const indexQuantity = this.form.quantity.findIndex(element => element.id == id);
+
                 if(index > -1){
                     this.form.services.splice(index, 1);
+                    this.form.quantity.splice(indexQuantity, 1);
                 }
+
+                this.totalPrice();
+            },
+
+            updateQuantity(id){
+                var inputValue = document.getElementById("inputService"+id).value;
+                var indexOfQuantity = this.form.quantity.findIndex(quantity => quantity.id == id);
+                var orderService = this.form.quantity[indexOfQuantity];
+
+                orderService.quantity = inputValue;
+                orderService.price = parseFloat(orderService.price);
+
+                this.totalPrice();
+            },
+
+            totalPrice(){
+                this.totalValue = 0;
+                this.form.quantity.forEach(element => {
+                    this.totalValue += parseFloat(element.price * element.quantity);
+                });
             },
 
             // Modal
 
             closeModal(){
-                document.getElementById("createModalClose"+this.id).click();
+                document.getElementById("editModalClose"+this.id).click();
+                // document.getElementById("selectService").value = "";
             },
 
             // Submit

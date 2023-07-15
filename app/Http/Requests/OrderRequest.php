@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
 
 class OrderRequest extends FormRequest
@@ -25,6 +26,7 @@ class OrderRequest extends FormRequest
             "reference" => ['string'],
             "status" => ["boolean"],
             "date" => ["required"],
+            "price" => ["integer"]
         ];
 
 
@@ -32,8 +34,17 @@ class OrderRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge([
-            'reference' => "REF".strval(random_int(0, 20000000)),
-        ]);
+        $latestOrder = Order::latest('id')->first();
+
+        if($latestOrder == null){
+            $this->merge([
+                'reference' => "REF1",
+            ]);
+        }else{
+            $increment = (int)filter_var($latestOrder->reference, FILTER_SANITIZE_NUMBER_INT) + 1;
+            $this->merge([
+                'reference' => "REF".strval($increment),
+            ]);
+        }
     }
 }

@@ -26,7 +26,7 @@ class ServiceRequest extends FormRequest
             "name" => ['required'],
             "price" => ['required'],
             "isLimited" => ['boolean'],
-            "image" => ['string'],
+            "image" => [''],
             "onService" => ['string']
         ];
     }

@@ -19,25 +19,30 @@ class ServiceController extends Controller
 
         $service = Service::create($request->validated());
 
-        // /** @var UploadedFile|null $image */
-        // $image = $request->validated('image');
-        // if ($image != null && !$image->getError()){
-        //     $data['image'] = $image->store('service', 'public');
-        //     $service->update($data);
-        // }
+        if($request->image != null){
+            /** @var UploadedFile|null $image */
+            $image = $request->validated('image');
+            if ($image != "null" && !$image->getError()){
+                $data['image'] = $image->store('service', 'public');
+                $service->update($data);
+            }
+        }
 
         return redirect()->back();
     }
 
     public function update(ServiceRequest $request, Service $service){
+
         $service->update($request->validated());
 
-        // /** @var UploadedFile|null $image */
-        // $image = $request->validated('image');
-        // if ($image != null && !$image->getError()){
-        //     $data['image'] = $image->store('service', 'public');
-        //     $service->update($data);
-        // }
+        if($request->image != null){
+            /** @var UploadedFile|null $image */
+            $image = $request->validated('image');
+            if ($image != "null" && !$image->getError()){
+                $data['image'] = $image->store('service', 'public');
+                $service->update($data);
+            }
+        }
 
         return redirect()->back();
     }

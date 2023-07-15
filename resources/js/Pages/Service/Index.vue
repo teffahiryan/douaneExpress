@@ -23,7 +23,8 @@
             <tbody>
                 <tr v-for="service in services" :key="service.id">
                     <th scope="row">{{ service.id }}</th>
-                    <td>null</td>
+                    <td v-if="service.image != 'null'" class="text-center w-25"> <img :src="'/storage/'+service.image" class="w-50 rounded" /> </td>
+                    <td v-else class="text-center"> Aucune image </td>
                     <td>{{ service.reference }}</td>
                     <td>{{ service.name }}</td>
                     <td>{{ service.price }} €</td>
