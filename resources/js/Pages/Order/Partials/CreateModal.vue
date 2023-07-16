@@ -21,7 +21,6 @@
                             <li class="list-group-item d-flex justify-content-between" v-for="selectedService in form.services" :key="'selected'+selectedService.id">
                                 <div>{{ selectedService.name }} - {{ selectedService.price }} € </div>
                                 <div>
-                                    
                                     <input v-if="selectedService.isLimited == 0" :id="'inputService'+selectedService.id" value="1" min="1" class="w-25" type="number" @change.prevent="updateQuantity(selectedService.id)"/>
                                     <input v-else :id="'inputService'+selectedService.id" class="w-25" value="1" type="number" @change.prevent="updateQuantity(selectedService.id)" disabled/>
 

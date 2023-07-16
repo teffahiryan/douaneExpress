@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
 
-class OrderRequest extends FormRequest
+class OrderUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,23 +27,5 @@ class OrderRequest extends FormRequest
             "date" => ["required"],
             "price" => ["integer"]
         ];
-
-
-    }
-
-    protected function prepareForValidation()
-    {
-        $latestOrder = Order::latest('id')->first();
-
-        if($latestOrder == null){
-            $this->merge([
-                'reference' => "REF1",
-            ]);
-        }else{
-            $increment = (int)filter_var($latestOrder->reference, FILTER_SANITIZE_NUMBER_INT) + 1;
-            $this->merge([
-                'reference' => "REF".strval($increment),
-            ]);
-        }
     }
 }

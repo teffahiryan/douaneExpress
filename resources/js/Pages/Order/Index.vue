@@ -14,7 +14,7 @@
                     <th scope="col">Référence</th>
                     <th scope="col">Prix total</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Status</th> 
                     <th scope="col">Actions</th>
                 </tr>
             </thead>

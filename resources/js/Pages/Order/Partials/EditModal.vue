@@ -4,16 +4,26 @@
         <div class="modal-content">
             <div class="modal-header">
             <h1 class="modal-title fs-5" id="editModalLabel">Modifier un bon</h1>
-            <button :id="'editModalClose'+id" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button :id="'editModalClose'+id" @click="closeModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="updateForm" @submit.prevent="submitUpdateOrder">
+                <form :id="'updateForm'+id" @submit.prevent="submitUpdateOrder" onkeydown="return event.key != 'Enter';">
+
+                    <div class="mb-3">
+                        <label class="form-label"> Référence </label>
+                        <div> {{ order.reference }} </div>
+                    </div>
+
+                    <hr/>
+
                     <div class="mb-3">
                         <label class="form-label"> Date </label>
                         <input type="date" class="form-control" v-model="form.date">
                     </div>
 
                     <hr/>
+
+                    <!-- Liste des services sélectionné -->
 
                     <div>
                         <div>Liste des services</div>
@@ -23,9 +33,15 @@
                                 <div>
                                 
                                     <!-- Not limited -->
-                                    <input v-if="selectedService.isLimited == 0" :id="'inputService'+selectedService.id" :value="selectedService.pivot.quantity" min="0" class="w-25" type="number" @change.prevent="updateQuantity(selectedService.id)"/>
+                                    <input  v-if="selectedService.isLimited == 0" 
+                                            :id="'inputService'+order.id+selectedService.id" 
+                                            min="1" 
+                                            class="w-25" 
+                                            type="number" 
+                                            @change.prevent="updateQuantity(selectedService.id)"
+                                    />
                                     <!-- Limited -->
-                                    <input v-else :id="'inputService'+selectedService.id" class="w-25" value="1" type="number" @change.prevent="updateQuantity(selectedService.id)" disabled/>
+                                    <input v-else :id="'inputService'+order.id+selectedService.id" class="w-25" value="1" type="number" @change.prevent="updateQuantity(selectedService.id)" disabled/>
 
                                     <button @click.prevent="removeServiceToList(selectedService.id)" type="button" class="m-1 btn btn-danger">
                                         <i class="fas fa-trash"></i>
@@ -38,18 +54,29 @@
  
                     <hr/>
 
+                    <!-- Sélection des services -->
+
                     <div class="mb-3">
                         <label class="form-label"> Sélectionner un ou plusieurs services </label>
                         <div class="d-flex">
-                            <select id="selectService" class="form-select">
-                                <option disabled value=""> Sélectionnez un service </option>
-                                <option class="d-flex justify-content-between" v-for="service in services" :value="service.id" :key="'selectCreate'+service.id"> 
-                                    <div>{{ service.id }} </div>
-                                    <div>{{ service.name }}</div>
+                            <select :id="'selectService'+id" class="form-select">
+                                <option id="defaultOption" selected disabled value=""> Sélectionnez un service </option>
+                                
+                                <option 
+                                    class="d-flex justify-content-between" 
+                                    v-for="service in services" 
+                                    :value="service.id" 
+                                    :key="'selectCreateDisabled'+service.id"
+                                    :disabled="isServiceDisabled(service)" 
+                                    
+                                > 
+                                    <div>{{ service.id }} - </div>
+                                    <div>{{ service.name }} - </div>
                                     <div>{{ service.price }} €</div>
                                 </option>
+
                             </select>
-                            <button @click.prevent="addServiceToList" class="btn btn-primary ms-2"> + </button>
+                            <button @click.prevent="addServiceToList" type="button" class="btn btn-primary ms-2"> + </button>
                         </div>
                     </div>
 
@@ -71,7 +98,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-            <button form="updateForm" type="submit" class="btn btn-primary">Modifier</button>
+            <button :form="'updateForm'+id" type="submit" class="btn btn-primary">Modifier</button>
             </div>
         </div>
         </div>
@@ -85,18 +112,40 @@
 
     export default {
         props: ['id', 'order', 'services'],
+        components : {
+            Form, 
+        },
         data() {
             return {
                 form: {
-                    reference: null,
+                    // reference: this.order.reference,
                     name: this.order.name,
                     status: this.order.status,
+                    price: this.order.price,
                     services: this.order.services,
+                    date: this.order.date,
                     quantity: [],
-                    date: this.order.date
                 },
-                totalPrice: 0.0
+                totalValue: this.order.price
             }
+        },
+        beforeMount(){
+            this.order.services.forEach(element => {
+                this.form.quantity.push(
+
+                    {
+                        'id': element.id,
+                        'quantity': element.pivot.quantity,
+                        'price': element.pivot.price
+                    }
+
+                );
+            });
+        },
+        mounted(){
+            this.order.services.forEach(element => {
+                document.getElementById("inputService"+this.order.id+element.id).value = element.pivot.quantity;
+            });
         },
         methods : {
 
@@ -113,7 +162,7 @@
             // Service list
 
             addServiceToList(){
-                var selectService = document.getElementById("selectService");
+                var selectService = document.getElementById("selectService"+this.id);
                 var selectedValue = selectService.value;
 
                 if(selectedValue != ""){
@@ -145,11 +194,16 @@
             },
 
             updateQuantity(id){
-                var inputValue = document.getElementById("inputService"+id).value;
+                // Je récupère la valeur de l'input quantity
+                var inputValue = document.getElementById("inputService"+this.order.id+id).value;
+                // Je récupère l'index de l'objet quantity du service
                 var indexOfQuantity = this.form.quantity.findIndex(quantity => quantity.id == id);
+                // Je récupère l'objet quantity du service
                 var orderService = this.form.quantity[indexOfQuantity];
 
+                // Je lui change suite la valeur de quantité
                 orderService.quantity = inputValue;
+                // Le prix
                 orderService.price = parseFloat(orderService.price);
 
                 this.totalPrice();
@@ -159,6 +213,10 @@
                 this.totalValue = 0;
                 this.form.quantity.forEach(element => {
                     this.totalValue += parseFloat(element.price * element.quantity);
+                });
+                this.form.price = 0;
+                this.form.quantity.forEach(element => {
+                    this.form.price += parseFloat(element.price * element.quantity);
                 });
             },
 
@@ -178,15 +236,13 @@
                     {
                         onSuccess: (page) => {
                             this.closeModal();
+                            console.log("test success");
                         },
-                        onError: (errors) => {alert("error")},
+                        onError: (errors) => {errors},
                     }
                 );
-                console.log("test 2");
             },
-        },
-        components : {
-            Form, 
+
         },
     }
 
