@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
     <div class="modal fade modal-lg" :id="'showModal'+id" tabindex="-1" aria-labelledby="showModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
@@ -50,4 +50,4 @@ import Header from '../../../Layouts/Partials/Header.vue'
         props: ['id', 'order', 'services'],
     }
 
-</script> -->
+</script>
