@@ -28,7 +28,7 @@ class ServiceController extends Controller
             }
         }
 
-        return redirect()->back();
+        return redirect()->back()->with(['success' => 'Le service a bien été créé.']);
     }
 
     public function update(ServiceRequest $request, Service $service){
@@ -44,12 +44,12 @@ class ServiceController extends Controller
             }
         }
 
-        return redirect()->back();
+        return redirect()->back()->with(['success' => 'Le service a bien été modifié.']);
     }
 
     public function destroy(Service $service){
         $service->delete();
         
-        return redirect()->back();
+        return redirect()->back()->with(['success' => 'Le service a bien été supprimé.']);
     }
 }

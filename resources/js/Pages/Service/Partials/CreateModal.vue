@@ -11,16 +11,19 @@
                     <div class="mb-3">
                         <label class="form-label"> Référence </label>
                         <input type="text" class="form-control" v-model="form.reference">
+                        <div class="text-danger mt-2" v-if="errors.reference">{{ errors.reference }}</div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label"> Nom </label>
                         <input type="text" class="form-control" v-model="form.name">
+                        <div class="text-danger mt-2" v-if="errors.name">{{ errors.name }}</div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label"> Prix </label>
                         <input type="text" class="form-control" v-model="form.price">
+                        <div class="text-danger mt-2" v-if="errors.price">{{ errors.price }}</div>
                     </div>
 
                     <div class="mb-3">
@@ -29,11 +32,13 @@
                             <input id="createFile" type="file" @input="form.image = $event.target.files[0]" class="form-control">
                             <button type="button" class="btn btn-danger ms-2" @click.prevent="removeFile"> <i class="fa fa-times"></i> </button>
                         </div>
+                        <div class="text-danger mt-2" v-if="errors.image">{{ errors.image }}</div>
                     </div>
 
                     <div class="mb-3 form-check form-switch">
                         <label class="form-label"> Limiter a une seule commande </label>
                         <input type="checkbox" v-model="form.isLimited" true-value="1" false-value="0" class="form-check-input" role="switch">
+                        <div class="text-danger mt-2" v-if="errors.isLimited">{{ errors.isLimited }}</div>
                     </div>
 
                     <div class="mb-3 form-group">
@@ -42,6 +47,8 @@
                             <option disabled value="null"> Sélectionnez un service </option>
                             <option v-for="service in services" :value="service.name" :key="'select'+service.id"> {{ service.name }} </option>
                         </select>
+                        <div class="mt-2 fst-italic">Le sur service permettra à ce que ce service ne soit pas sélectionnable tant que le service supérieur n'a pas été sélectionné dans la commande.</div>
+                        <div class="text-danger mt-2" v-if="errors.onService">{{ errors.onService }}</div>
                     </div>
                 </form>
             </div>
@@ -69,7 +76,8 @@
                     image: "null",
                     isLimited: 0,
                     onService: "null"
-                }
+                },
+                errors: [],
             }
         },
         props: ['services'],
@@ -89,6 +97,7 @@
 
             closeModal(){
                 document.getElementById("createModalClose").click();
+                this.errros = [];
                 this.form.reference = null;
                 this.form.name = null;
                 this.form.price = null;
@@ -104,13 +113,13 @@
                     '/service', 
                     this.form,
                     {
+                        errorBag: 'createService',
                         onSuccess: (page) => {
                             this.closeModal();
                         },
-                        onError: (errors) => {console.log(errors)},
+                        onError: (errors) => {this.errors = errors},
                     }
                 );
-                console.log("test 2");
             },
 
         },

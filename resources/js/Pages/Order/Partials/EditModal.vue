@@ -18,7 +18,8 @@
 
                     <div class="mb-3">
                         <label class="form-label"> Date </label>
-                        <input type="date" class="form-control" v-model="form.date">
+                        <input type="date" class="form-control" v-model="form.date" :min="currentDate">
+                        <div class="text-danger mt-2" v-if="errors.date">{{ errors.date }}</div>
                     </div>
 
                     <hr/>
@@ -94,6 +95,7 @@
                                 <label class="ms-2" for="huey">Fermé</label>
                             </div>
                         </fieldset>
+                        <div class="text-danger mt-2" v-if="errors.status">{{ errors.status }}</div>
                     </div>
                 </form>
             </div>
@@ -126,7 +128,9 @@
                     date: this.order.date,
                     quantity: [],
                 },
-                totalValue: this.order.price
+                totalValue: this.order.price,
+                errors: [],
+                currentDate: ""
             }
         },
         beforeMount(){
@@ -146,6 +150,11 @@
             this.order.services.forEach(element => {
                 document.getElementById("inputService"+this.order.id+element.id).value = element.pivot.quantity;
             });
+
+            var date = new Date();
+            this.currentDate += date.getFullYear()+"-";
+            date.getMonth() < 10 ? this.currentDate += "0"+(date.getMonth()+1)+"-" : this.currentDate += date.getMonth()+1+"-";
+            date.getDate() < 10 ? this.currentDate += "0"+date.getDate()+"-" : this.currentDate += date.getDate();
         },
         methods : {
 

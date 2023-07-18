@@ -49,7 +49,7 @@ class OrderController extends Controller
             $order->services()->sync($service_id_array); 
         }
 
-        return redirect()->back();
+        return redirect()->back()->with(['success' => 'Le bon de commande a bien été créé.']);
     }
 
     public function update(OrderUpdateRequest $request, Order $order){
@@ -69,11 +69,11 @@ class OrderController extends Controller
             $order->services()->sync($service_id_array); 
         } 
 
-        return redirect()->back();
+        return redirect()->back()->with(['success' => 'Le bon de commande a bien été modifié.']);
     }
 
     public function destroy(Order $order){
         $order->delete();
-        return redirect()->back();
+        return redirect()->back()->with(['success' => 'Le bon de commande a bien été supprimé.']);
     }
 }

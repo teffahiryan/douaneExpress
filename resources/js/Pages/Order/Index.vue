@@ -2,6 +2,8 @@
     <div>
         <h1>Bons de commandes</h1>
 
+        <div class="alert alert-success my-2" v-if="$page.props.flash.message"> {{ $page.props.flash.message }} </div>
+
         <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#createModal">
             Créer un bon
         </button>

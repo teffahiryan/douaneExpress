@@ -10,7 +10,8 @@
                 <form id="createForm" @submit.prevent="submitCreateOrder" onkeydown="return event.key != 'Enter';">
                     <div class="mb-3">
                         <label class="form-label"> Date </label>
-                        <input type="date" class="form-control" v-model="form.date">
+                        <input type="date" class="form-control" v-model="form.date" :min="currentDate">
+                        <div class="text-danger mt-2" v-if="errors.date">{{ errors.date }}</div>
                     </div>
 
                     <hr/>
@@ -73,6 +74,7 @@
                                 <label class="ms-2" for="huey">Fermé</label>
                             </div>
                         </fieldset>
+                        <div class="text-danger mt-2" v-if="errors.status">{{ errors.status }}</div>
                     </div>
                 </form>
             </div>
@@ -101,8 +103,16 @@
                     date: null,
                     quantity: []
                 },
-                totalValue: 0.0
+                totalValue: 0.0,
+                errors: [],
+                currentDate: "",
             }
+        },
+        mounted(){
+            var date = new Date();
+            this.currentDate += date.getFullYear()+"-";
+            date.getMonth() < 10 ? this.currentDate += "0"+(date.getMonth()+1)+"-" : this.currentDate += date.getMonth()+1+"-";
+            date.getDate() < 10 ? this.currentDate += "0"+date.getDate()+"-" : this.currentDate += date.getDate();
         },
         methods : {
 
@@ -192,7 +202,7 @@
                         onSuccess: (page) => {
                             this.closeModal();
                         },
-                        onError: (errors) => {alert("error")},
+                        onError: (errors) => {this.errors = errors},
                     }
                 );
                 console.log("test 2");
