@@ -36,6 +36,7 @@
                                     <!-- Not limited -->
                                     <input  v-if="selectedService.isLimited == 0" 
                                             :id="'inputService'+order.id+selectedService.id" 
+                                            value="1"
                                             min="1" 
                                             class="w-25" 
                                             type="number" 
@@ -58,25 +59,30 @@
                     <!-- Sélection des services -->
 
                     <div class="mb-3">
-                        <label class="form-label"> Sélectionner un ou plusieurs services </label>
-                        <div class="d-flex">
-                            <select :id="'selectService'+id" class="form-select">
-                                <option id="defaultOption" selected disabled value=""> Sélectionnez un service </option>
-                                
-                                <option 
-                                    class="d-flex justify-content-between" 
-                                    v-for="service in services" 
-                                    :value="service.id" 
-                                    :key="'selectCreateDisabled'+service.id"
-                                    :disabled="isServiceDisabled(service)" 
-                                    
-                                > 
-                                    <div>{{ service.id }} - </div>
-                                    <div>{{ service.name }} - </div>
-                                    <div>{{ service.price }} €</div>
-                                </option>
-
-                            </select>
+                        <label class="form-label"> Sélectionnez un ou plusieurs services </label>
+                        <div class="d-flex justify-content-center">
+                            <div class="w-75">
+                                <div :id="'selectService'+id" role="button" class="form-select p-2 user-select-none position-relative" @click="displayOptions">
+                                    Sélectionnez un service
+                                </div>
+                                <div :id="'serviceOptionList'+id" class="d-none w-75 p-2 position-absolute bg-white border rounded" style="z-index: 2;">
+                                    <input :id="'inputOptionCreate'+id" type="text" class="form-control" placeholder="Rechercher..." @keydown="searchOption($event)">
+                                    <option
+                                        :id="'option'+id+service.id"
+                                        role="button"
+                                        class="d-flex justify-content-between m-2" 
+                                        v-for="service in serviceList" 
+                                        :value="service.id" 
+                                        :key="'selectCreateDisabled'+service.id"
+                                        :disabled="isServiceDisabled(service)" 
+                                        @click="selected('option'+id+service.id)"
+                                    >
+                                        <div>{{ service.reference }} </div>
+                                        <div>{{ service.name }} </div>
+                                        <div>{{ service.price }} €</div>
+                                    </option>
+                                </div>
+                            </div>
                             <button @click.prevent="addServiceToList" type="button" class="btn btn-primary ms-2"> + </button>
                         </div>
                     </div>
@@ -120,7 +126,6 @@
         data() {
             return {
                 form: {
-                    // reference: this.order.reference,
                     name: this.order.name,
                     status: this.order.status,
                     price: this.order.price,
@@ -130,7 +135,9 @@
                 },
                 totalValue: this.order.price,
                 errors: [],
-                currentDate: ""
+                currentDate: "",
+                searchKey: "",
+                serviceList: this.services,
             }
         },
         beforeMount(){
@@ -157,6 +164,34 @@
             date.getDate() < 10 ? this.currentDate += "0"+date.getDate()+"-" : this.currentDate += date.getDate();
         },
         methods : {
+
+            // Select
+
+            displayOptions(){
+                var serviceOptionList = document.getElementById("serviceOptionList"+this.id);
+                if(serviceOptionList.classList.contains("d-none")){
+                    serviceOptionList.classList.remove("d-none");
+                }else{
+                    serviceOptionList.classList.add("d-none");
+                }
+            },
+
+            selected(id){
+                var serviceOptionList = document.getElementById("serviceOptionList"+this.id);
+                var input = document.getElementById("inputOptionCreate"+this.id);
+                var selectService = document.getElementById("selectService"+this.id);
+                var service = this.services.find(service => service.id == document.getElementById(id).value);
+                serviceOptionList.classList.add("d-none");
+                selectService.value = service.id;
+                selectService.innerHTML = service.name;
+                // Reset services list options
+                input.value = "";
+                this.serviceList = this.services;
+            },
+
+            searchOption(event){
+                this.serviceList = this.services.filter(service => service.name.toLowerCase().includes(event.target.value.toLowerCase()));
+            },
 
            // Disable options
 
@@ -187,6 +222,11 @@
                     this.form.quantity.push(newQuantity);
 
                     this.totalPrice();
+
+                    
+                    // ResetSelectService
+                    selectService.innerHTML = "Sélectionnez un service";
+                    selectService.value = null;
                 }
             },
 
