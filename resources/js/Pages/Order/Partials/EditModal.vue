@@ -184,6 +184,7 @@
 
                 // Méthode qui permet de sélectionner le service cliqué
                 selected(id){
+
                     var serviceOptionList = document.getElementById("serviceOptionList"+this.id);
                     var input = document.getElementById("inputOptionCreate"+this.id);
                     var selectService = document.getElementById("selectService"+this.id);
@@ -191,16 +192,19 @@
                     // Je récupère le service en question
                     var service = this.services.find(service => service.id == document.getElementById(id).value);
 
-                    // Je ferme la liste des options du select
-                    serviceOptionList.classList.add("d-none");
+                    // Si l'option est disable je ne sélectionne pas
+                    if(!this.isServiceDisabled(service)){
+                        // Je ferme la liste des options du select
+                        serviceOptionList.classList.add("d-none");
 
-                    // J'entre ensuite dans le select le service sélectionné et lui passe l'id en valeur pour la transmission du service en cas d'ajout
-                    selectService.value = service.id;
-                    selectService.innerHTML = service.name;
+                        // J'entre ensuite dans le select le service sélectionné et lui passe l'id en valeur pour la transmission du service en cas d'ajout
+                        selectService.value = service.id;
+                        selectService.innerHTML = service.name;
 
-                    // Reset services list options
-                    input.value = "";
-                    this.serviceList = this.services;
+                        // Reset services list options
+                        input.value = "";
+                        this.serviceList = this.services;
+                    }
                 },
 
                 // Méthode pour le fonctionnement de la barre de recherche dans le select
@@ -220,7 +224,10 @@
                     return  (service.onService !== 'null' && this.form.services.findIndex(e => e.name === service.onService) === -1)
                             ||
                             // Si le service est limité à une commande et qu'il est déjà dans la liste des services sélectionné -> disabled
-                            (service.isLimited == 1 && this.form.services.findIndex(e => e.name === service.name) > -1);
+                            (service.isLimited == 1 && this.form.services.findIndex(e => e.name === service.name) > -1)
+                            ||
+                            // Si le service est déjà sélectionné -> disabled
+                            (this.form.services.findIndex(e => e.name === service.name) > -1);
                 },
 
 
