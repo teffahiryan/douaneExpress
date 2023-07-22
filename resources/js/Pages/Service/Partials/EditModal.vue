@@ -61,17 +61,14 @@
 
 <script>
 
-    import Form from './Form.vue';
     import { router } from '@inertiajs/vue3'
 
     export default {
         props: ['id', 'service', 'services'],
-        components : {
-            Form, 
-        },
         data() {
             return {
                 form: {
+                    // J'intègre la méthode PUT ici, car la méthode PUT ne fonctionne pas avec les fichiers
                     _method: 'put',
                     reference: this.service.reference,
                     name: this.service.name,

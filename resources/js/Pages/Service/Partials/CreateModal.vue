@@ -62,8 +62,6 @@
 
 <script>
 
-    import Form from './Form.vue';
-    import {ref, reactive} from 'vue';
     import { router } from '@inertiajs/vue3'
 
     export default {
@@ -81,9 +79,6 @@
             }
         },
         props: ['services'],
-        components : {
-            Form, 
-        },
         methods : {
 
             // File
@@ -97,7 +92,7 @@
 
             closeModal(){
                 document.getElementById("createModalClose").click();
-                this.errros = [];
+                this.errors = [];
                 this.form.reference = null;
                 this.form.name = null;
                 this.form.price = null;
@@ -113,7 +108,6 @@
                     '/service', 
                     this.form,
                     {
-                        errorBag: 'createService',
                         onSuccess: (page) => {
                             this.closeModal();
                         },

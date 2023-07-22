@@ -19,7 +19,6 @@
 </template>  
 
 <script>
-
     import { router } from '@inertiajs/vue3'
 
     export default {
@@ -37,11 +36,8 @@
                         onBefore: visit => {
                             this.closeModal()
                         },
-                        onSuccess: (page) => {
-                            
-                        },
                         onError: (errors) => {
-                            alert("error")
+                            alert("Erreur lors de la suppression")
                         },
                     }
                 );

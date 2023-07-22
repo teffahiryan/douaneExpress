@@ -62,6 +62,7 @@
         },
         props: {
             services: Array,
+            // Les messages flash sont directement configuré depuis un seul fichier : "HandleInertiaRequests"
             success: String
         },
         computed: {

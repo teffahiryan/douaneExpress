@@ -68,9 +68,6 @@
             orders: Array,
             services: Array
         },
-        computed: {
-            console: () => "console"
-        },
     }
 
 </script>

@@ -8,6 +8,9 @@
             </div>
             <div class="modal-body">
                 <form id="createForm" @submit.prevent="submitCreateOrder" onkeydown="return event.key != 'Enter';">
+                    
+                    <!-- Date -->
+
                     <div class="mb-3">
                         <label class="form-label"> Date </label>
                         <input type="date" class="form-control" v-model="form.date" :min="currentDate">
@@ -15,6 +18,8 @@
                     </div>
 
                     <hr/>
+
+                    <!-- Services -->
 
                     <div>
                         <div>Liste des services</div>
@@ -67,6 +72,8 @@
 
                     <hr/>
 
+                    <!-- Status -->
+
                     <div class="mb-3">
                         <fieldset>
                             <legend> Status </legend>
@@ -92,11 +99,10 @@
 </template>  
 
 <script>
-
-    import Form from './Form.vue';
     import { router } from '@inertiajs/vue3'
 
     export default {
+        props: ['services'],
         data() {
             return {
                 form: {
@@ -116,6 +122,7 @@
             }
         },
         mounted(){
+            // Création de la date du jour dans le bon format
             var date = new Date();
             this.currentDate += date.getFullYear()+"-";
             date.getMonth() < 10 ? this.currentDate += "0"+(date.getMonth()+1)+"-" : this.currentDate += date.getMonth()+1+"-";
@@ -123,137 +130,170 @@
         },
         methods : {
 
-            // Select
+            // ****************** Select ******************
 
-            displayOptions(){
-                var serviceOptionList = document.getElementById("serviceOptionList");
-                if(serviceOptionList.classList.contains("d-none")){
-                    serviceOptionList.classList.remove("d-none");
-                }else{
+
+                // Affichage ou non des options du select
+                displayOptions(){
+                    var serviceOptionList = document.getElementById("serviceOptionList");
+                    if(serviceOptionList.classList.contains("d-none")){
+                        serviceOptionList.classList.remove("d-none");
+                    }else{
+                        serviceOptionList.classList.add("d-none");
+                    }
+                },
+
+                // Méthode qui permet de sélectionner le service cliqué
+                selected(id){
+                    var serviceOptionList = document.getElementById("serviceOptionList");
+                    var input = document.getElementById("inputOptionCreate");
+                    var selectService = document.getElementById("selectService");
+
+                    // Je récupère le service en question
+                    var service = this.services.find(service => service.id == document.getElementById(id).value);
+
+                    // Je ferme la liste des options du select
                     serviceOptionList.classList.add("d-none");
-                }
-            },
 
-            selected(id){
-                var serviceOptionList = document.getElementById("serviceOptionList");
-                var input = document.getElementById("inputOptionCreate");
-                var selectService = document.getElementById("selectService");
-                var service = this.services.find(service => service.id == document.getElementById(id).value);
-                serviceOptionList.classList.add("d-none");
-                selectService.value = service.id;
-                selectService.innerHTML = service.name;
-                // Reset services list options
-                input.value = "";
-                this.serviceList = this.services;
-            },
+                    // J'entre ensuite dans le select le service sélectionné et lui passe l'id en valeur pour la transmission du service en cas d'ajout
+                    selectService.value = service.id;
+                    selectService.innerHTML = service.name;
 
-            searchOption(event){
-                this.serviceList = this.services.filter(service => service.name.toLowerCase().includes(event.target.value.toLowerCase()));
-            },
+                    // Reset services list options
+                    input.value = "";
+                    this.serviceList = this.services;
+                },
 
-            // Disable options
+                // Méthode pour le fonctionnement de la barre de recherche dans le select
+                searchOption(event){
+                    // J'ajoute dans la liste des options qui seront dans le select, les services qui correspondent à la valeur entrée dans l'input
+                    // J'ai créé ici une liste spécifique à la liste des options car une fois les services filtré ils ne seront plus récupèrable
+                    this.serviceList = this.services.filter(service => service.name.toLowerCase().includes(event.target.value.toLowerCase()));
+                },
 
-            isServiceDisabled(service) {
-                        // Si le service possède un service supérieur et que le service supérieur n'est pas dans la liste des services sélectionné -> disabled
-                return  (service.onService !== 'null' && this.form.services.findIndex(e => e.name === service.onService) === -1)
-                        ||
-                        // Si le service est limité à une commande et qu'il est déjà dans la liste des services sélectionné -> disabled
-                        (service.isLimited == 1 && this.form.services.findIndex(e => e.name === service.name) > -1);
-            },
 
-            // Service list
+            // ****************** Disable options ******************
 
-            addServiceToList(){
-                var selectService = document.getElementById("selectService");
-                var selectedValue = selectService.value;
+                // Méthode qui permet de disable les options selon plusieurs critères
+                isServiceDisabled(service) {
+                            // Si le service possède un service supérieur et que le service supérieur n'est pas dans la liste des services sélectionné -> disabled
+                    return  (service.onService !== 'null' && this.form.services.findIndex(e => e.name === service.onService) === -1)
+                            ||
+                            // Si le service est limité à une commande et qu'il est déjà dans la liste des services sélectionné -> disabled
+                            (service.isLimited == 1 && this.form.services.findIndex(e => e.name === service.name) > -1)
+                            ||
+                            // Si le service est déjà sélectionné -> disabled
+                            (this.form.services.findIndex(e => e.name === service.name) > -1);
 
-                if(selectedValue != ""){
-                    var service = this.services.find(service => service.id == selectedValue);
-                    this.form.services.push(service);
+                },
 
-                    const newQuantity = {
-                        'id': selectedValue,
-                        'quantity' : 1,
-                        'price' : service.price
+
+            // ****************** Service list ******************
+
+                // Ajout du service sélectionné dans la liste des services sélectionné
+                addServiceToList(){
+                    var selectService = document.getElementById("selectService");
+                    var selectedValue = selectService.value;
+
+                    if(selectedValue != ""){
+                        // Je récupère le service via le value du select
+                        var service = this.services.find(service => service.id == selectedValue);
+                        // Je l'ajoute dans la liste des services sélectionné
+                        this.form.services.push(service);
+
+                        // Création des informations de pivot 
+                        const newQuantity = {
+                            'id': selectedValue,
+                            'quantity' : 1,
+                            'price' : service.price
+                        }
+                        this.form.quantity.push(newQuantity);
+
+                        // Je met à jour le prix total
+                        this.totalPrice();
+
+                        // ResetSelectService
+                        selectService.innerHTML = "Sélectionnez un service";
+                        selectService.value = null;
+                    }
+                },
+
+
+                // Suppression du service de la liste des services sélectionné
+                removeServiceToList(id){
+                    const index = this.form.services.findIndex(service => service.id == id);
+                    const indexQuantity = this.form.quantity.findIndex(element => element.id == id);
+
+                    // Si le service est bien trouvé je le retire avec la méthode splice
+                    if(index > -1){
+                        this.form.services.splice(index, 1);
+                        this.form.quantity.splice(indexQuantity, 1);
                     }
 
-                    this.form.quantity.push(newQuantity);
-
+                    // Je met à jour le prix total
                     this.totalPrice();
+                },
 
-                    // ResetSelectService
-                    selectService.innerHTML = "Sélectionnez un service";
-                    selectService.value = null;
-                }
-            },
 
-            removeServiceToList(id){
-                const index = this.form.services.findIndex(service => service.id == id);
-                const indexQuantity = this.form.quantity.findIndex(element => element.id == id);
+                // Je met à jour la quantité du service
+                updateQuantity(id){
+                    var inputValue = document.getElementById("inputService"+id).value;
+                    var indexOfQuantity = this.form.quantity.findIndex(quantity => quantity.id == id);
 
-                if(index > -1){
-                    this.form.services.splice(index, 1);
-                    this.form.quantity.splice(indexQuantity, 1);
-                }
+                    // Je récupère les informations pivot en question
+                    var orderService = this.form.quantity[indexOfQuantity];
 
-                this.totalPrice();
-            },
+                    // Je lui insère les nouvelles valeurs
+                    orderService.quantity = inputValue;
+                    orderService.price = parseFloat(orderService.price);
 
-            updateQuantity(id){
-                var inputValue = document.getElementById("inputService"+id).value;
-                var indexOfQuantity = this.form.quantity.findIndex(quantity => quantity.id == id);
-                var orderService = this.form.quantity[indexOfQuantity];
+                    // Je met à jour le prix total
+                    this.totalPrice();
+                },
 
-                orderService.quantity = inputValue;
-                orderService.price = parseFloat(orderService.price);
+                // Méthode qui permet de mettre à jour le prix total
+                totalPrice(){
+                    this.totalValue = 0;
+                    this.form.quantity.forEach(element => {
+                        this.totalValue += parseFloat(element.price * element.quantity);
+                    });
+                },
 
-                this.totalPrice();
-            },
 
-            totalPrice(){
-                this.totalValue = 0;
-                this.form.quantity.forEach(element => {
-                    this.totalValue += parseFloat(element.price * element.quantity);
-                });
-            },
+            // ****************** Modal ******************
 
-            // Modal
 
-            closeModal(){
-                document.getElementById("createModalClose").click();
-                document.getElementById("selectService").value = "";
-                this.form.reference = null;
-                this.form.name = null;
-                this.form.status = null;
-                this.form.date = null;
-                this.form.services = [];
-                this.form.quantity = [];
-                this.totalValue = 0;
-            },
+                closeModal(){
+                    document.getElementById("createModalClose").click();
+                    document.getElementById("selectService").value = "";
+                    this.form.reference = null;
+                    this.form.name = null;
+                    this.form.status = null;
+                    this.form.date = null;
+                    this.form.services = [];
+                    this.form.quantity = [];
+                    this.totalValue = 0;
+                },
 
-            // Submit
+
+            // ****************** Submit ******************
  
-            submitCreateOrder(){
-                router.post(
-                    '/bons-de-commande', 
-                    this.form,
-                    {
-                        onSuccess: (page) => {
-                            this.closeModal();
-                        },
-                        onError: (errors) => {this.errors = errors},
-                    }
-                );
-                console.log("test 2");
-            },
+
+                submitCreateOrder(){
+                    router.post(
+                        '/bons-de-commande', 
+                        this.form,
+                        {
+                            onSuccess: (page) => {
+                                this.closeModal();
+                            },
+                            onError: (errors) => {
+                                this.errors = errors
+                            },
+                        }
+                    );
+                },
         },
-        props: ['services'],
-        components : {
-            Form, 
-        },
-        computed: {
-            
-        }
     }
 
 </script>

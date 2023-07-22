@@ -34,15 +34,12 @@
                 router.delete(
                     '/service/'+this.id,
                     {
+                        // Nécessaire de onBefore car après un onSuccess le service est déjà supprimé et donc la modal avec
                         onBefore: visit => {
                             this.closeModal()
                         },
-
-                        onSuccess: (page) => {
-                            
-                        },
                         onError: (errors) => {
-                            alert("error")
+                            alert("Erreur lors de la suppression")
                         },
                     }
                 );
