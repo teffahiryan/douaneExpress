@@ -123,7 +123,7 @@
     import { router } from '@inertiajs/vue3'
 
     export default {
-        props: ['id', 'order', 'services'],
+        props: ['id', 'order', 'services', 'currentDate'],
         data() {
             return {
                 form: {
@@ -136,7 +136,6 @@
                 },
                 totalValue: this.order.price,
                 errors: [],
-                currentDate: "",
                 searchKey: "",
                 serviceList: this.services,
             }
@@ -146,7 +145,6 @@
             // Afin de réutiliser les méthodes créé pour le create
             this.order.services.forEach(element => {
                 this.form.quantity.push(
-
                     {
                         'id': element.id,
                         'quantity': element.pivot.quantity,
@@ -161,12 +159,6 @@
             this.order.services.forEach(element => {
                 document.getElementById("inputService"+this.order.id+element.id).value = element.pivot.quantity;
             });
-
-            // Création de la date du jour dans le bon format
-            var date = new Date();
-            this.currentDate += date.getFullYear()+"-";
-            date.getMonth() < 10 ? this.currentDate += "0"+(date.getMonth()+1)+"-" : this.currentDate += date.getMonth()+1+"-";
-            date.getDate() < 10 ? this.currentDate += "0"+date.getDate()+"-" : this.currentDate += date.getDate();
         },
         methods : {
 
@@ -314,7 +306,6 @@
 
                 closeModal(){
                     document.getElementById("editModalClose"+this.id).click();
-                    // document.getElementById("selectService").value = "";
                 },
 
 

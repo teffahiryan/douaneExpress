@@ -17,7 +17,7 @@
                     <th scope="col">Référence</th>
                     <th scope="col">Nom</th>
                     <th scope="col">Prix</th>
-                    <th scope="col">isLimited</th>
+                    <th scope="col">Limité</th>
                     <th scope="col">Sur service</th>
                     <th scope="col">Actions</th>
                 </tr>
@@ -30,7 +30,7 @@
                     <td>{{ service.reference }}</td>
                     <td>{{ service.name }}</td>
                     <td>{{ service.price }} €</td>
-                    <td>{{ service.isLimited }}</td>
+                    <td>{{ service.isLimited > 0 ? "Oui" : "Non" }}</td>
                     <td> {{ service.onService }} </td>
                     <td>
                         <button class="btn btn-secondary text-light me-2" data-bs-toggle="modal" v-bind:data-bs-target="'#editModal' + service.id">

@@ -7,7 +7,7 @@
         <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#createModal">
             Créer un bon
         </button>
-        <CreateModal :services="services"/>
+        <CreateModal :services="services" :current-date="currentDate"/>
 
         <table class="table">
             <thead>
@@ -36,7 +36,7 @@
                         <button v-if="order.status == 1" class="m-1 btn btn-secondary text-light" data-bs-toggle="modal" v-bind:data-bs-target="'#editModal' + order.id">
                             <i class="fas fa-pencil-alt"></i>
                         </button>
-                        <EditModal :id="order.id" :order="order" :services="services"/>
+                        <EditModal :id="order.id" :order="order" :services="services" :current-date="currentDate"/>
                         
                         <button class="m-1 btn btn-danger" data-bs-toggle="modal" v-bind:data-bs-target="'#deleteModal' + order.id">
                             <i class="fas fa-trash"></i>
@@ -68,6 +68,18 @@
             orders: Array,
             services: Array
         },
+        data() {
+            return {
+                currentDate: ""
+            }
+        },
+        mounted(){
+            // Création de la date du jour dans le bon format
+            var date = new Date();
+            this.currentDate += date.getFullYear()+"-";
+            date.getMonth() < 10 ? this.currentDate += "0"+(date.getMonth()+1)+"-" : this.currentDate += date.getMonth()+1+"-";
+            date.getDate() < 10 ? this.currentDate += "0"+date.getDate()+"-" : this.currentDate += date.getDate();
+        }
     }
 
 </script>

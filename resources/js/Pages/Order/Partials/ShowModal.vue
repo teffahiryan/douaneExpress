@@ -3,7 +3,7 @@
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h1 class="modal-title fs-5" id="showModalLabel">Bons de commande REF : {{ order.reference }} </h1>
+            <h1 class="modal-title fs-5" id="showModalLabel">Bon de commande : {{ order.reference }} </h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -26,8 +26,9 @@
                 <div class="mb-4">
                     <h2 class="mb-3"> Liste des services </h2>
                     <ul class="list-group mb-3">
-                        <li class="list-group-item" v-for="service in order.services" :key="'orderService'+id+service.id">
-                            <!-- {{ service.name }} - {{ service.price }} € - x{{ service.pivot.quantity }} -->
+                        <li class="list-group-item d-flex justify-content-between" v-for="service in order.services" :key="'orderService'+id+service.id">
+                            <div>{{ service.name }}</div>
+                            <div> {{ service.price }} € - <span v-if="service.pivot != null"> x{{ service.pivot.quantity }} </span></div>
                         </li>
                     </ul>
                     <div>Prix total : {{ order.price }} € </div>

@@ -102,7 +102,7 @@
     import { router } from '@inertiajs/vue3'
 
     export default {
-        props: ['services'],
+        props: ['services', 'currentDate'],
         data() {
             return {
                 form: {
@@ -116,17 +116,12 @@
                 },
                 totalValue: 0.0,
                 errors: [],
-                currentDate: "",
                 searchKey: "",
                 serviceList: this.services,
             }
         },
         mounted(){
-            // Création de la date du jour dans le bon format
-            var date = new Date();
-            this.currentDate += date.getFullYear()+"-";
-            date.getMonth() < 10 ? this.currentDate += "0"+(date.getMonth()+1)+"-" : this.currentDate += date.getMonth()+1+"-";
-            date.getDate() < 10 ? this.currentDate += "0"+date.getDate()+"-" : this.currentDate += date.getDate();
+
         },
         methods : {
 
