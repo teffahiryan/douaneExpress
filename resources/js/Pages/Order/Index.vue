@@ -52,6 +52,8 @@
 
 <script>
 
+    import { router } from '@inertiajs/vue3'
+
     import CreateModal from './Partials/CreateModal.vue';
     import EditModal from './Partials/EditModal.vue';
     import DeleteModal from './Partials/DeleteModal.vue';
@@ -79,6 +81,12 @@
             this.currentDate += date.getFullYear()+"-";
             date.getMonth() < 10 ? this.currentDate += "0"+(date.getMonth()+1)+"-" : this.currentDate += date.getMonth()+1+"-";
             date.getDate() < 10 ? this.currentDate += "0"+date.getDate()+"-" : this.currentDate += date.getDate();
+        },
+        methods: {
+            getTotalPrice(){
+                router.get('/panier/total');
+                
+            }
         }
     }
 

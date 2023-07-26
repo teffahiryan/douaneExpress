@@ -24,56 +24,71 @@ class OrderController extends Controller
         ]);
     }
 
+    // **************************************************************************************************************************************************************************************
+
     public function store(OrderRequest $request){
+
+        // dd($request);
+
         $order = Order::create($request->validated());
 
         // Total Price
 
         $data['price'] = 0.0;
-        foreach ($request->quantity as $key => $item) {
-            $data['price'] += $item['price'] * $item['quantity'];
-        }
+        // foreach ($request->quantity as $key => $item) {
+        //     $data['price'] += $item['price'] * $item['quantity'];
+        // }
         $order->update($data);
 
         // Service
 
         // Je vérifie qu'il y a bien des services qui ont été sélectionné
-        if($request->services != null){
-            // Je boucle selon le nombre de service sélectionné
-            for($i = 0; $i <= count($request->services) - 1 ; $i++){
-                // Je récupère l'index du service
-                $indexOf = array_search($request->services[$i]['id'], array_column($request->quantity, 'id'));
-                // J'assemble les données que je stock ensuite
-                $service_id_array[$request->services[$i]['id']] = ['quantity' => $request->quantity[$indexOf]['quantity'], 'price' => $request->quantity[$indexOf]['price']];
-            }
-            $order->services()->sync($service_id_array); 
+        if($request->servicesList != null){
+            $order->services()->sync($this->prepareDataToSync($request->servicesList)); 
         }
 
         return redirect()->back()->with(['success' => 'Le bon de commande a bien été créé.']);
     }
 
+    // **************************************************************************************************************************************************************************************
+
     public function update(OrderUpdateRequest $request, Order $order){
+
+        // dd($request);
 
         $order->update($request->validated());
 
         // Je vérifie qu'il y a bien des services qui ont été sélectionné
-        if($request->services != null){
-            // Je boucle selon le nombre de service sélectionné
-            for($i = 0; $i <= count($request->services) - 1 ; $i++){
-                // Je récupère l'index du service
-                $indexOf = array_search($request->services[$i]['id'], array_column($request->quantity, 'id'));
-                
-                // J'assemble les données que je stock ensuite
-                $service_id_array[$request->services[$i]['id']] = ['quantity' => $request->quantity[$indexOf]['quantity'], 'price' => $request->quantity[$indexOf]['price']];
-            }
-            $order->services()->sync($service_id_array); 
+        if($request->servicesList != null){
+            $order->services()->sync($this->prepareDataToSync($request->servicesList)); 
         } 
 
         return redirect()->back()->with(['success' => 'Le bon de commande a bien été modifié.']);
     }
 
+    // **************************************************************************************************************************************************************************************
+
+
     public function destroy(Order $order){
         $order->delete();
         return redirect()->back()->with(['success' => 'Le bon de commande a bien été supprimé.']);
+    }
+
+    // ADDITIONALS
+
+    public function prepareDataToSync($data){
+        for($i = 0; $i <= count($data) - 1 ; $i++){
+            $service_id_array[$data[$i]['id']] = ['quantity' => $data[$i]['pivot']['quantity'], 'price' => $data[$i]['price'] * $data[$i]['pivot']['quantity']];
+        }
+        return $service_id_array;
+    }
+
+    public function totalPrice(Request $request){
+        $data = 0;
+        for($i = 0; $i <= count($request->servicesList) - 1 ; $i++){
+            $value = intval($request->servicesList[$i]['pivot']['quantity']) * intval($request->servicesList[$i]['price']);
+            $data = $data + $value;
+        }
+        return response()->json($data);
     }
 }

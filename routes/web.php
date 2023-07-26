@@ -23,3 +23,7 @@ Route::get('/bons-de-commandes', [OrderController::class, 'index'])->name('order
 Route::post('/bons-de-commande', [OrderController::class, 'store'])->name('order.create');
 Route::put('/bons-de-commande/{order}', [OrderController::class, 'update'])->name('order.update');
 Route::delete('/bons-de-commande/{order}', [OrderController::class, 'destroy'])->name('order.destroy');
+
+// Total Price
+
+Route::get('/panier/total', [OrderController::class, 'totalPrice']);
