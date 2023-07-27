@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ServiceController;
 
@@ -16,6 +17,13 @@ Route::get('/services', [ServiceController::class, 'index'])->name('service.inde
 Route::post('/service', [ServiceController::class, 'store'])->name('service.create');
 Route::put('/service/{service}', [ServiceController::class, 'update'])->name('service.update');
 Route::delete('/service/{service}', [ServiceController::class, 'destroy'])->name('service.destroy');
+
+// Groups
+
+Route::get('/groups', [GroupController::class, 'index'])->name('group.index');
+Route::post('/group', [GroupController::class, 'store'])->name('group.create');
+Route::put('/group/{group}', [GroupController::class, 'update'])->name('group.update');
+Route::delete('/group/{group}', [GroupController::class, 'destroy'])->name('group.destroy');
 
 // Purchase Orders
 

@@ -35,20 +35,20 @@
                         <div class="text-danger mt-2" v-if="errors.image">{{ errors.image }}</div>
                     </div>
 
-                    <div class="mb-3 form-check form-switch">
-                        <label class="form-label"> Limiter a une seule commande </label>
-                        <input type="checkbox" v-model="form.isLimited" true-value="1" false-value="0" class="form-check-input" role="switch">
-                        <div class="text-danger mt-2" v-if="errors.isLimited">{{ errors.isLimited }}</div>
+                    <div class="mb-3">
+                        <label class="form-label"> Quantité Maximale </label>
+                        <input type="text" class="form-control" v-model="form.maxQuantity">
+                        <div class="text-danger mt-2" v-if="errors.maxQuantity">{{ errors.maxQuantity }}</div>
                     </div>
 
                     <div class="mb-3 form-group">
-                        <label class="form-label"> Sur service (Optionnel)</label>
-                        <select class="form-select" v-model="form.onService">
-                            <option disabled value="null"> Sélectionnez un service </option>
-                            <option v-for="service in services" :value="service.name" :key="'select'+service.id"> {{ service.name }} </option>
+                        <label class="form-label"> Groupe </label>
+                        <select class="form-select" v-model="form.group_id">
+                            <option disabled value="null"> Sélectionnez un groupe </option>
+                            <option v-for="group in groups" :value="group.id" :key="'select'+group.id"> {{ group.name }} </option>
                         </select>
                         <div class="mt-2 fst-italic">Le sur service permettra à ce que ce service ne soit pas sélectionnable tant que le service supérieur n'a pas été sélectionné dans la commande.</div>
-                        <div class="text-danger mt-2" v-if="errors.onService">{{ errors.onService }}</div>
+                        <div class="text-danger mt-2" v-if="errors.group">{{ errors.group }}</div>
                     </div>
                 </form>
             </div>
@@ -71,14 +71,16 @@
                     reference: null,
                     name: null,
                     price: null,
+                    maxQuantity: null,
                     image: "null",
+                    group_id: null,
                     isLimited: 0,
                     onService: "null"
                 },
                 errors: [],
             }
         },
-        props: ['services'],
+        props: ['groups'],
         methods : {
 
             // File
@@ -96,8 +98,8 @@
                 this.form.reference = null;
                 this.form.name = null;
                 this.form.price = null;
-                this.form.isLimited = 0;
-                this.form.onService = "null";
+                // this.form.isLimited = 0;
+                // this.form.onService = "null";
                 this.form.image = "null";
             },
 

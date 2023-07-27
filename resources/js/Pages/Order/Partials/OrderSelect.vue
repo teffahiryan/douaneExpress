@@ -4,9 +4,9 @@
         <div>Liste des services</div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between" v-for="service in formServicesList" :key="'selected'+service.id">
-                <div>{{ service.name }} - {{ service.price }} € </div>
+                <div>{{ service.name }} <span v-if="service.price"> - {{ service.price }} € </span> </div>
                 <div>
-                    <input min="1" class="w-25" type="number" v-model="service.pivot.quantity"/>
+                    <input min="1" class="w-25" type="number" v-model="service.pivot.quantity" @change="this.$emit('getTotalPrice');"/>
                     <button @click.prevent="remove(service)" type="button" class="m-1 btn btn-danger">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -47,9 +47,8 @@
                         :key="'selectCreateDisabled'+service.id"
                         @click="selectedService = service, selectedServiceName = service.name, displayOptions.display = 0"
                     >
-                        <div>{{ service.reference }} </div>
                         <div>{{ service.name }} </div>
-                        <div>{{ service.price }} €</div>
+                        <div v-if="service.price">{{ service.price }} €</div>
                     </option>
                 </div>
             </div>
@@ -66,6 +65,7 @@
             formServicesList: Array,
             price: Number
         },
+        emits: ['getTotalPrice'],
         data() {
             return {
                 displayOptions : {
@@ -98,6 +98,7 @@
             remove(service){
                 var index = this.formServicesList.map(e => e.index).indexOf(service.index);
                 index >= 0 ? this.formServicesList.splice(index, 1) : '';
+                this.$emit('getTotalPrice');
             },
 
         },

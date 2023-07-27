@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Http\Requests\ServiceRequest;
@@ -9,13 +10,15 @@ use App\Http\Requests\ServiceRequest;
 class ServiceController extends Controller
 {
     public function index(){
- 
         return inertia('Service/Index', [
-            'services' => Service::orderBy("id", "ASC")->get()
+            'services' => Service::orderBy("id", "ASC")->with("group")->get(),
+            'groups' => Group::all()
         ]);
     }
 
     public function store(ServiceRequest $request){
+
+        // dd($request);
 
         $service = Service::create($request->validated());
 
