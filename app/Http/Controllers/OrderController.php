@@ -48,11 +48,11 @@ class OrderController extends Controller
 
         // Total Price
 
-        $data['price'] = 0.0;
+        // $data['price'] = 0.0;
         // foreach ($request->quantity as $key => $item) {
         //     $data['price'] += $item['price'] * $item['quantity'];
         // }
-        $order->update($data);
+        // $order->update($data);
 
         // Service
 

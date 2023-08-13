@@ -28,7 +28,7 @@
 
                     <OrderSelect :price="form.price" :services="services" :form-servicesList="form.servicesList" @getTotalPrice="getTotalPrice"></OrderSelect>
 
-                    <hr/>
+                    <hr/> 
 
                     <!-- Status -->
 
@@ -99,6 +99,8 @@
  
 
                 submitCreateOrder(){
+                    console.log("send");
+                    console.log(this.form);
                     router.post(
                         '/bons-de-commande', 
                         this.form,
@@ -107,7 +109,11 @@
                                 // this.closeModal();
                             },
                             onError: (errors) => {
-                                this.errors = errors
+                                this.errors = errors;
+                                console.log("error");
+                                console.log(this.form);
+                                console.log(errors);
+                                console.log("----------------------------------------");
                             },
                         }
                     );

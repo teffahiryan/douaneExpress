@@ -37,6 +37,7 @@
                         type="text" class="form-control" 
                         placeholder="Rechercher..." 
                         v-model="searchValue"
+                        @change="searchAssignments"
                     >
                     
                     <option

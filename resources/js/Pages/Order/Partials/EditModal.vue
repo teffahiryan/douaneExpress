@@ -30,7 +30,7 @@
 
                     <!-- Liste des services sélectionné -->
 
-                    <OrderSelect :services="services" :form-servicesList="form.servicesList"></OrderSelect>
+                    <OrderSelect :price="form.price" :services="services" :form-servicesList="form.servicesList" @getTotalPrice="getTotalPrice"></OrderSelect>
 
                     <hr/>
 
@@ -106,6 +106,15 @@
                         }
                     );
                 },
+
+            // ****************** Get Total Price ******************
+
+                getTotalPrice(){
+                    axios.get('/panier/total', {params : {servicesList : this.form.servicesList} })
+                    .then(res => {
+                        this.form.price = res.data
+                })
+            }
 
         },
     }

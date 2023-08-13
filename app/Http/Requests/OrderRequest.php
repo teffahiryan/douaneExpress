@@ -26,7 +26,7 @@ class OrderRequest extends FormRequest
             "reference" => ['string', 'same:reference'],
             "status" => ["boolean"],
             "date" => ["required"],
-            "price" => ["integer"]
+            "price" => ["required"]
         ];
 
 
