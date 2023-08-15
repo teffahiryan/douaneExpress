@@ -85,7 +85,6 @@
         methods: {
             getTotalPrice(){
                 router.get('/panier/total');
-                
             }
         }
     }

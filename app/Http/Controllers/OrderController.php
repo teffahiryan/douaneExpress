@@ -13,10 +13,12 @@ class OrderController extends Controller
 {
     public function index(){
  
-        $AllServices = Service::with('group')->get();
+        // Prepare services
+
+        $allServices = Service::with('group')->get();
         $services = collect([]);
 
-        foreach ($AllServices as $service) {
+        foreach ($allServices as $service) {
             if ($service->group == null) {
                 $services->push($service);
             }else{
@@ -26,8 +28,40 @@ class OrderController extends Controller
             }
         };
 
+        // Prepare orders
+
+        // Il faudrait que je créé un nouvel attribut dans order qui ne prends pas en compte les relations
+
+        $allOrders = Order::orderBy("id", "ASC")->with("services")->get();
+        $orders = collect([]);
+
+        foreach ($allOrders as $order) {
+
+            $order->preparedServices = collect([]);
+
+            foreach ($order->services as $service) {
+
+                // Si le service n'a pas de groupe alors je push l'order sans modification
+                if ($service->group == null) {
+                    $order->preparedServices->push($service);
+
+                // Sinon si elle a bien un groupe, je vérifie dans la commande actuel si le groupe à déjà été inséré si oui je ne l'ajoute pas, sinon j'ajoute le groupe à la place du service
+                }else{
+                    if($order->preparedServices->doesntContain('id', $service->group->id)){
+                        $service->group->pivot = ['quantity' => 10];
+                        $order->preparedServices->push($service->group);
+                    }
+                }
+
+            }
+
+            $orders->push($order);
+        };
+
+        // dd($orders);
+
         return inertia('Order/Index', [
-            'orders' => Order::orderBy("id", "ASC")->with("services")->get(),
+            'orders' => $orders,
             'services' => $services
         ]);
     }

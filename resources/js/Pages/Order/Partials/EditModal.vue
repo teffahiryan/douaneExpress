@@ -72,7 +72,7 @@
                 form: {
                     status: this.order.status,
                     price: this.order.price,
-                    servicesList: this.order.services,
+                    servicesList: this.order.preparedServices,
                     date: this.order.date,
                 },
                 errors: [],
