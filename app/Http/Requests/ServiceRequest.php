@@ -28,7 +28,6 @@ class ServiceRequest extends FormRequest
             "maxQuantity" => ['nullable'],
             "group_id" => ['nullable'],
             "image" => [''],
-
         ];
     }
 }

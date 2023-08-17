@@ -32,33 +32,28 @@ class OrderController extends Controller
 
         // Il faudrait que je créé un nouvel attribut dans order qui ne prends pas en compte les relations
 
-        $allOrders = Order::orderBy("id", "ASC")->with("services")->get();
+        $allOrders = Order::orderBy("id", "ASC")->with("services", "groups")->get();
         $orders = collect([]);
 
         foreach ($allOrders as $order) {
-
             $order->preparedServices = collect([]);
+            // dd($order);
 
             foreach ($order->services as $service) {
-
                 // Si le service n'a pas de groupe alors je push l'order sans modification
                 if ($service->group == null) {
                     $order->preparedServices->push($service);
-
-                // Sinon si elle a bien un groupe, je vérifie dans la commande actuel si le groupe à déjà été inséré si oui je ne l'ajoute pas, sinon j'ajoute le groupe à la place du service
+                // Sinon si il a bien un groupe, je vérifie dans la commande actuel si le groupe à déjà été inséré si oui je ne l'ajoute pas, sinon j'ajoute le groupe à la place du service
                 }else{
                     if($order->preparedServices->doesntContain('id', $service->group->id)){
-                        $service->group->pivot = ['quantity' => 10];
-                        $order->preparedServices->push($service->group);
+                        // Ici je devrais récupérer le group concerné, il sera donc lié avec "Order", un attribut "pivot->quantity" et donc ensuite l'insérer
+                        $order->preparedServices->push($order->groups()->where('name', $service->group->name)->get()->first());
                     }
                 }
-
             }
 
             $orders->push($order);
         };
-
-        // dd($orders);
 
         return inertia('Order/Index', [
             'orders' => $orders,
@@ -76,23 +71,17 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request){
 
-        // dd($request);
+        // dd($request->servicesList);
 
         $order = Order::create($request->validated());
-
-        // Total Price
-
-        // $data['price'] = 0.0;
-        // foreach ($request->quantity as $key => $item) {
-        //     $data['price'] += $item['price'] * $item['quantity'];
-        // }
-        // $order->update($data);
 
         // Service
 
         // Je vérifie qu'il y a bien des services qui ont été sélectionné
         if($request->servicesList != null){
-            $order->services()->sync($this->prepareDataToSync($request->servicesList)); 
+            $order->services()->sync($this->prepareServiceToSync($request->servicesList)); 
+            // Ajout des groupes
+            $order->groups()->sync($this->prepareGroupToSync($request->servicesList));
         }
 
         return redirect()->back()->with(['success' => 'Le bon de commande a bien été créé.']);
@@ -108,7 +97,8 @@ class OrderController extends Controller
 
         // Je vérifie qu'il y a bien des services qui ont été sélectionné
         if($request->servicesList != null){
-            $order->services()->sync($this->prepareDataToSync($request->servicesList)); 
+            $order->services()->sync($this->prepareServiceToSync($request->servicesList)); 
+            $order->groups()->sync($this->prepareGroupToSync($request->servicesList));
         } 
 
         return redirect()->back()->with(['success' => 'Le bon de commande a bien été modifié.']);
@@ -125,7 +115,7 @@ class OrderController extends Controller
     // ADDITIONALS
 
 
-    public function prepareDataToSync($data){
+    public function prepareServiceToSync($data){
 
         $groups = Group::all();
 
@@ -149,7 +139,6 @@ class OrderController extends Controller
                 $diff = 0;
 
                 foreach ($servicesFiltered as $item) {
-                
                     if($item->maxQuantity != null && $data[$i]['pivot']['quantity'] > 0){
 
                         $diff = $item->maxQuantity - $diff;
@@ -160,17 +149,31 @@ class OrderController extends Controller
                     }elseif($data[$i]['pivot']['quantity'] > 0){
                         $service_id_array[$item['id']] = ['quantity' => $data[$i]['pivot']['quantity'], 'price' => $item['price'] * $data[$i]['pivot']['quantity']];
                     };
-
                 }
-                
-
             }
             
         }
         return $service_id_array;
     }
 
+    public function prepareGroupToSync($data){
+
+        $groups = Group::all();
+        $group_id_array = [];
+
+        for($i = 0; $i <= count($data) - 1 ; $i++){
+            // Si le nom du service correspond à un groupe
+            if($groups->contains('name', $data[$i]['name']) ){
+                $group_id_array[$data[$i]['id']] = ['quantity' => $data[$i]['pivot']['quantity']];
+            }
+        }
+
+        return $group_id_array;
+
+    }
+
     // ***** Prix total *****
+
 
     public function totalPrice(Request $request){
 
