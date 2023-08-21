@@ -37,8 +37,6 @@ class OrderController extends Controller
 
         foreach ($allOrders as $order) {
             $order->preparedServices = collect([]);
-            // dd($order);
-
             foreach ($order->services as $service) {
                 // Si le service n'a pas de groupe alors je push l'order sans modification
                 if ($service->group == null) {
@@ -51,7 +49,6 @@ class OrderController extends Controller
                     }
                 }
             }
-
             $orders->push($order);
         };
 
@@ -60,6 +57,8 @@ class OrderController extends Controller
             'services' => $services
         ]);
     }
+
+    // **************************************************************************************************************************************************************************************
 
     public function show(Order $order){
         return inertia('Order/Show', [
@@ -70,37 +69,24 @@ class OrderController extends Controller
     // **************************************************************************************************************************************************************************************
 
     public function store(OrderRequest $request){
-
-        // dd($request->servicesList);
-
         $order = Order::create($request->validated());
-
-        // Service
-
         // Je vérifie qu'il y a bien des services qui ont été sélectionné
         if($request->servicesList != null){
             $order->services()->sync($this->prepareServiceToSync($request->servicesList)); 
-            // Ajout des groupes
             $order->groups()->sync($this->prepareGroupToSync($request->servicesList));
         }
-
         return redirect()->back()->with(['success' => 'Le bon de commande a bien été créé.']);
     }
 
     // **************************************************************************************************************************************************************************************
 
     public function update(OrderUpdateRequest $request, Order $order){
-
-        // dd($request);
-
         $order->update($request->validated());
-
         // Je vérifie qu'il y a bien des services qui ont été sélectionné
         if($request->servicesList != null){
             $order->services()->sync($this->prepareServiceToSync($request->servicesList)); 
             $order->groups()->sync($this->prepareGroupToSync($request->servicesList));
         } 
-
         return redirect()->back()->with(['success' => 'Le bon de commande a bien été modifié.']);
     }
 

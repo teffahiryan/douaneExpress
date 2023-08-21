@@ -106,7 +106,7 @@
                         this.form,
                         {
                             onSuccess: (page) => {
-                                // this.closeModal();
+                                this.closeModal();
                             },
                             onError: (errors) => {
                                 this.errors = errors;

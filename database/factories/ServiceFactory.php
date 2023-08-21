@@ -17,11 +17,6 @@ class ServiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'reference' => $this->faker->unique()->word(1),
-            'name' => $this->faker->word(2),
-            'price' => $this->faker->randomDigit,
-            'isLimited' => $this->faker->boolean,
-            'image' => 'null'
         ];
     }
 }
