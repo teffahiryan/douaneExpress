@@ -17,11 +17,7 @@ class ServiceController extends Controller
     }
 
     public function store(ServiceRequest $request){
-
-        // dd($request);
-
         $service = Service::create($request->validated());
-
         if($request->image != null){
             /** @var UploadedFile|null $image */
             $image = $request->validated('image');
@@ -30,14 +26,11 @@ class ServiceController extends Controller
                 $service->update($data);
             }
         }
-
         return redirect()->back()->with(['success' => 'Le service a bien été créé.']);
     }
 
     public function update(ServiceRequest $request, Service $service){
-
         $service->update($request->validated());
-
         if($request->image != null){
             /** @var UploadedFile|null $image */
             $image = $request->validated('image');
@@ -46,13 +39,11 @@ class ServiceController extends Controller
                 $service->update($data);
             }
         }
-
         return redirect()->back()->with(['success' => 'Le service a bien été modifié.']);
     }
 
     public function destroy(Service $service){
         $service->delete();
-        
         return redirect()->back()->with(['success' => 'Le service a bien été supprimé.']);
     }
 }
